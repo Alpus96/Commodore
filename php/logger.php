@@ -9,7 +9,7 @@
 	*   @since          1.0
 	*   @deprecated     ---
 	* */
-	class logger{
+	class logger {
 
 		//	Absolute path to log file.
 		static private $path;
