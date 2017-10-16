@@ -12,5 +12,13 @@
             self::$token_handler = new tokenHandler();
         }
 
+        function login ($username, $password) {
+
+        }
+
+        function logout () {
+            
+        }
+
     }
 ?>
