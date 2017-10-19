@@ -1,9 +1,9 @@
 <?php
 
-    require_once 'mysqlSocket.php';
-    require_once 'logger.php';
+    require_once 'MysqlSocket.php';
+    require_once 'Logger.php';
 
-    class userModel extends mysqlSocket {
+    class UserModel extends MysqlSocket {
 
         static private $query;
 
@@ -17,9 +17,10 @@
         protected function read ($username) {
             if (!is_string($username)) { return false; }
             $conn = parent::connect();
-            if (!$conn)
-            { self::logError($conn);
-              return false; }
+            if (!$conn) {
+                self::logError($conn);
+                return false;
+            }
             if ($query = $conn->prepare(self::$query->read)) {
                 $query->bind_param('s', $username);
                 $query->execute();
@@ -30,7 +31,8 @@
                     'display_name' => $display_name,
                     'hash' => $hash,
                     'type' => $type,
-                    'locked' => $locked ];
+                    'locked' => $locked
+                ];
                 $query->close();
                 $conn->close();
                 return $data->hash ? $data : false;
@@ -42,9 +44,10 @@
         protected function updateHash ($username, $newHash) {
             if (!is_string($username) || !is_string($newHash)) { return false; }
             $conn = parent::connect();
-            if (!$conn)
-            { self::logError($conn);
-              return false; }
+            if (!$conn) {
+                self::logError($conn);
+                return false;
+            }
             if ($query = $conn->prepare(self::$query->ud_hash)) {
                 $query->bind_param('ss', $newHash, $username);
                 $query->execute();
@@ -60,9 +63,10 @@
         protected function updateDisplayName ($username, $new_dname) {
             if (!is_string($username) || !is_string($new_dname)) { return false; }
             $conn = parent::connect();
-            if (!$conn)
-            { self::logError($conn);
-              return false; }
+            if (!$conn) {
+                self::logError($conn);
+                return false;
+            }
             if ($query = $conn->prepare(self::$query->ud_dname)) {
                 $query->bind_param('ss', $new_dname, $username);
                 $query->execute();
@@ -75,8 +79,15 @@
             return false;
         }
 
+        /*private function logError ($no, $str) {
+            $logger = new logger('mysqlSocket_errorLog');
+            try { throw new Exception($no." :\t".$str); }
+            catch (Exception $e)
+            { $logger->log($e); }
+        }*/
+
         private function logError ($msg) {
-            $logger = new logger('tokenModel_errorsLog');
+            $logger = new Logger('tokenModel_errorsLog');
             $e = new Exception($msg);
             $logger->log('Unable to connect to database: '.$e);
         }
