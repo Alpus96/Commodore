@@ -1,5 +1,4 @@
 <?php
-    apd_set_pprof_trace();
     /**
     *   This class handels optimising image
     *   files to reduce required bandwidth.
