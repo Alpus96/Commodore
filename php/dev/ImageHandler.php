@@ -1,4 +1,5 @@
 <?php
+    apd_set_pprof_trace();
     /**
     *   This class handels optimising image
     *   files to reduce required bandwidth.
@@ -13,24 +14,22 @@
     *   @deprecated     ---
     * */
 
-    //  Require logger class.
-    require_once 'logger.php';
+    require_once 'Logger.php';
 
-    /**
-    *
-    * */
-    class imageHandler {
+    class ImageHandler {
 
         /**
         *   @method     Reduces the size of an image file if possible.
         *
         *   @param      string  The path to the image file to compress.
         *   @param      string  The destimation path for the compressed image.
-        *   @param      integer 1-100, percent quality compared to oroginal image.
+        *   @param      integer 1-100, percent quality compared to original image.
         *
         *   @return     boolean Representation of the success status.
         * */
-        function compress ($src, $target, $quality = 85) {
+        function compress ($src, $target, $quality = 75) {
+            if (!file_exists($src) || $src === $target || $quality > 100 || $quality < 1)
+            { return false; }
             //  Get mime type of image.
             $fio = finfo_open(FILEINFO_MIME_TYPE);
             $info = finfo_file($fio, $src);
@@ -52,6 +51,7 @@
                 self::evaluateAndClean($src, $target, $info);
                 return true;
             }
+            //  If the file was not read or it was not an image return false.
             return false;
         }
 
@@ -69,29 +69,31 @@
             $newSize = filesize($new);
 
             //  Calculate and evaluate quota.
-            $percent = $newSize / $oldSize;
+            $percent = round(($newSize/$oldSize)*100, 1);
             $eval;
             if ($percent < 60) {
                 $eval = 'Outstanding!';
             } else if ($percent > 61 && $percent < 75) {
-                $eval = 'Very good!';
+                $eval = 'Good!';
             } else if ($percent > 76 && $percent < 85) {
-                $eval = 'Good.';
-            } else if ($percent > 86 && $percent < 95) {
                 $eval = 'Ok.';
             } else if ($percent > 86 && $percent < 95) {
+                $eval = 'Meh.';
+            } else if ($percent > 96 && $percent <= 100) {
                 $eval = 'Bad.';
+            } else if ($percent > 100) {
+                $eval = 'Awful!';
             }
 
             //  Instanse the logger.
-            $logger = new logger('imageSocket_evaluationLog');
+            $logger = new Logger('imageSocket_evaluationLog');
             //  Write evaluation log.
-            $msg = 'Compressed image of type '.$mime.', result; '.$eval.'';
-            self::$logger->log($msg);
+            $msg = 'Compressed image ('.$mime.'), result; '.$eval.'('.$percent.'% of original)';
+            $logger->log($msg);
 
             //  Delete old file. (Unless the
             //  compression had reverse effect)
-            if (!$percent > 100) {
+            if ($percent < 100) {
                 unlink($src);
             }
         }

@@ -14,10 +14,10 @@
     *   @deprecated     ---
     * */
 
-    require_once 'mysqlSocket.php';
-    require_once 'logger.php';
+    require_once 'MysqlSocket.php';
+    require_once 'Logger.php';
 
-    class userModel extends mysqlSocket {
+    class UserModel extends MysqlSocket {
 
         static private $query;
 
@@ -146,7 +146,7 @@
         * */
         private function logError ($msg) {
             //  Open the log instance.
-            $logger = new logger('tokenModel_errorsLog');
+            $logger = new Logger('tokenModel_errorsLog');
             //  Create an exception with the given prameter.
             $e = new Exception($msg);
             //  Log the exception.
