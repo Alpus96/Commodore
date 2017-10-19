@@ -35,7 +35,7 @@
             $unix = time();
             if ($token) {
                 $saved = false;
-                if (parent::getFromStore($id))
+                if (parent::isInStore($id))
                 { $saved = parent::updateInStore($id, $token, $salt, $unix); }
                 else { $saved = parent::saveToStore($id, $token, $salt, $unix); }
                 return $saved ? $token : false;
@@ -47,6 +47,18 @@
             if (!is_string($token)) { return false; }
 
             $info = parent::getFromStore($token);
+            if (!info) { return false; }
+            $expired = strtotime($info->unix) + self::$config->valid_for < time();
+            if ($expired) { return false; }
+            unset($info->unix);
+            $valid = true;
+            $t_obj = null;
+            try { $t_obj = self::$jwt->decode($token, $info->salt); }
+            catch (Exception $e) {
+                $valid = false;
+                self::logException($e->message);
+            }
+            return $t_obj != null && $valid != false ? $t_obj : false;
         }
 
         private function generateSalt ($len) {
