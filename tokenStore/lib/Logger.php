@@ -9,7 +9,7 @@
 	*   @since          1.0
 	*   @deprecated     ---
 	* */
-	class logger {
+	class Logger {
 
 		//	Absolute path to log file.
 		static private $path;
@@ -23,7 +23,12 @@
 			//	Set the path to the log file with date before given name.
 			date_default_timezone_set('Europe/Stockholm');
 			$date = date('Y-m-d');
-			self::$path = dirname(__FILE__).'/logs/'.$date.'_'.$file_name.'.txt';
+			self::$path = __DIR__.'/logs/'.$date.'_'.$file_name.'.txt';
+			if (!file_exists(dirname(self::$path))) {
+                try { mkdir(dirname(self::$path)); }
+                catch (Exception $e)
+                { self::logException($e); }
+            }
 		}
 
 		/**
@@ -40,7 +45,7 @@
 			//	Begin the log entry with the current
 			//	timea nd write it to the file.
 			$time = date('H:i:s');
-			fwrite($file, '\n'.$time.'\t'.$str);
+			fwrite($file, "\n".$time."\t".$str);
 			//	Close the file when done.
 			fclose($file);
 		}
