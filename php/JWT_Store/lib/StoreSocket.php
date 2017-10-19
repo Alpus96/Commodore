@@ -2,32 +2,31 @@
 
     require_once 'MysqlSocket.php';
 
-    class StoreModel extends MysqlSocket {
+    class StoreSocket extends MysqlSocket {
 
         static private $query;
 
         protected function __construct () {
             parent::__construct();
             self::$query = (object)[
-                'insert' => 'INSERT INTO TOKEN_STORE SET ID = ?, TOKEN = ?, SALT = ?, UNIX = ?',
+                'insert' => 'INSERT INTO TOKEN_STORE SET ID = ?, TOKEN = ?, SALT = ?',
                 'select_t' => 'SELECT ID, SALT, UNIX FROM TOKEN_STORE WHERE TOKEN = ?',
                 'select_id' => 'SELECT UNIX FROM TOKEN_STORE WHERE ID = ?',
-                'update' => 'UPDATE TOKEN_STORE SET TOKEN = ?, SALT = ?, UNIX = ? WHERE ID = ?',
+                'update' => 'UPDATE TOKEN_STORE SET TOKEN = ?, SALT = ? WHERE ID = ?',
                 'delete' => 'DELETE FROM TOKEN_STORE WHERE ID = ?'
             ];
         }
 
-        protected function saveToStore ($id, $token, $salt, $unix) {
+        protected function saveToStore ($id, $token, $salt) {
             $t_is = is_string($token);
             $s_is = is_string($salt);
-            $u_ii = is_integer($unix);
             $id_t = is_string($id) ? 's' : is_integer($id) ? 'i' : false;
-            if (!$id_t || !$t_is || !$s_is || !$u_ii) { return false; }
+            if (!$id_t || !$t_is || !$s_is) { return false; }
 
             $conn = parent::connect();
             if (!$conn) { return false; }
             if ($query = $conn->prepare(self::$query->insert)) {
-                $query->bind_param($id_t.'sss', $id, $token, $salt, $unix);
+                $query->bind_param($id_t.'sss', $id, $token, $salt);
                 $query->execute();
                 $success = $query->affected_rows > 0 ? true : false;
                 $query->close();
@@ -83,17 +82,16 @@
             return false;
         }
 
-        protected function updateInStore ($id, $token, $salt, $unix) {
+        protected function updateInStore ($id, $token, $salt) {
             $t_is = is_string($token);
             $s_is = is_string($salt);
-            $u_ii = is_integer($unix);
             $id_t = is_string($id) ? 's' : is_integer($id) ? 'i' : false;
-            if (!$id_t || !$t_is || !$s_is || !$u_ii) { return false; }
+            if (!$id_t || !$t_is || !$s_is) { return false; }
 
             $conn = parent::connect();
             if (!$conn) { return false; }
             if ($query = $conn->prepare(self::$query->update)) {
-                $query->bind_param('ssi'.$id_t, $token, $salt, $unix, $id);
+                $query->bind_param('ss'.$id_t, $token, $salt, $id);
                 $query->execute();
                 $success = $query->affected_rows > 0 ? true : false;
                 $query->close();
