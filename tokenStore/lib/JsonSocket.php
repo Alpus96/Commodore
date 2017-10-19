@@ -12,9 +12,9 @@
     *   @deprecated     ---
     * */
 
-    require_once 'logger.php';
+    require_once 'Logger.php';
 
-    class jsonSocket {
+    class JsonSocket {
 
         static private $lib_path;
 
@@ -28,16 +28,14 @@
             if ($lib_path && is_string($lib_path)) {
                 //  Set the library path to the passed path.
                 self::$lib_path = $lib_path;
-            } else {
-                //  Use default if no library path was passed.
-                self::$libraryPath = dirname(__FILE__).'/json/';
             }
+            //  Use default if no library path was passed.
+            self::$lib_path = self::$lib_path ? self::$lib_path : __DIR__.'/json_lib/';
             //  Try creating the library folder if it does not already exist.
             if (!file_exists(self::$lib_path)) {
-                try { mkdir($lib_path); }
-                catch (Exception $e) {
-                    self::handleError($e);
-                }
+                try { mkdir(self::$lib_path); }
+                catch (Exception $e)
+                { self::logException($e); }
             }
         }
 
@@ -51,15 +49,10 @@
         function create ($file_name, $data = null) {
             //  Concatinate the absolute path to the new json file.
             $file_path = self::$lib_path.$file_name.'.json';
-            //  Return true if it already exists.
-            if (file_exists($file_path)) {
-                return true;
-            }
-            //  If the file does not exist, try creating it.
+            //  Create the file.
             try { touch($file_path); }
-            catch(Exeption $e) {
-                self::handleError($e);
-            }
+            catch(Exeption $e)
+            { self::logException($e); }
             //  Continue if successful.
             //  If data was passed return the update success.
             if ($data != null) {
@@ -136,19 +129,15 @@
         *   @method     This function logs a message before throwing it as an Exception.
         *
         *   @param      string    : The message too log and throw as an Exception.
-        *
-        *   @throws     Exception : Could not create library folder.
-        *   @throws     Exception : Could not create new json file.
         * */
-        private function handleError ($msg) {
-            // Set the message as an Exception
-            $e = new Exception($msg);
+        private function logException ($msg) {
             //  Create the logger instance and set the name of the logfile.
             $logger = new logger('jsonSocket_errorLog');
-            //  Log the error message.
-            $logger->log($e);
-            //  Throw the Exception.
-            throw $e;
+            // Throw the message as an Exception
+            try { throw new Exception($msg); }
+            catch (Exception $e)
+            //  Log the Exception.
+            { $logger->log($e); }
         }
 
     }

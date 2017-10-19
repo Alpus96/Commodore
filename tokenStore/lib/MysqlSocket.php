@@ -15,10 +15,10 @@
     *   @deprecated     ---
     * */
 
-    require_once 'jsonSocket.php';  //  Require the jsonSocket class to read the credentials json.
-    require_once 'logger.php';      //  Require the logger class file for error logging.
+    require_once 'JsonSocket.php';  //  Require the jsonSocket class to read the credentials json.
+    require_once 'Logger.php';      //  Require the logger class file for error logging.
 
-    class mysqlSocket {
+    class MysqlSocket {
 
         static private $config;     //  MySQL database configuration.
 
@@ -30,18 +30,16 @@
         protected function __construct() {
             //  Temporairaly instance the jsonSocket and read the configuration file.
             $json_socket = new jsonSocket();
-            $config = $jsonSocket->read('mysqlConfig');
+            $config = $json_socket->read('MysqlConfig');
             //  If the configuration read returned false handle the error.
-            if (!self::$config) {
-                self::handleError('Could not read mysqlSocket configuration file.');
-            }
+            if (!$config) { self::logError(0, 'Could not read mysqlSocket configuration file.'); }
             //  Set boolean values for required top level properties exist.
             $credentials = property_exists($config, 'credentials');
             $chatset = property_exists($config, 'credentials');
             //  Confirm property credentials exist.
             if (!$credentials) {
                 //  If the credentials property did not exist, handle the error.
-                self::handleError('mysqlSocket configuration file missing credential(s).');
+                self::logError(0, 'mysqlSocket configuration file missing credential(s).');
             }
             //  Confirm property charset exist.
             if (!$charset) {
@@ -56,7 +54,7 @@
             //  Confirm required properties exist.
             if (!$host || !$user || !$password || !$database) {
                 //  If any where missing, handle the error.
-                self::handleError('mysqlSocket configuration file missing credential(s).');
+                self::logError(0, 'mysqlSocket configuration file missing credential(s).');
             } else {
                 //  If all required credential properties exist set the class
                 //  configuration variable to current configuration.
@@ -71,43 +69,38 @@
         *   @return      mysqli_connect
         * */
         protected function connect() {
+            //
+            set_error_handler(function($err_no, $err_str)
+            { self::logError($err_no, $err_str); });
             //  Connect to the database using the loaded cridentials.
-            $conn = mysqli_connect(
-                self::$config->cridentials->host,
-                self::$config->cridentials->user,
-                self::$config->cridentials->password,
-                self::$config->cridentials->database
+            $conn = new mysqli (
+                self::$config->credentials->host,
+                self::$config->credentials->user,
+                self::$config->credentials->password,
+                self::$config->credentials->database
             );
+            restore_error_handler();
+            //  Confirm there was no error connecting to the database.
+            if ($conn->connect_error) { return false; }
             //  Change the connection charset and save result as boolean.
-            $charset = $conn->set_charset(self::$socketConfig->charset);
-            //  Confirm there was no error connecting
-            //  to the database or changing charset.
-            if ($conn && $chatset) {
-                //  If all is ok, return the connection.
-                return $conn;
-            }
-            //  If there was an error handel it.
-            $msg = 'Error connecting to the mysql database; '.$connection->connect_error;
-            self::handleError($msg);
-            return false;
+            $charset = $conn->set_charset(self::$config->charset);
+            //  If all is ok, return the connection.
+            return $conn;
         }
 
         /**
         *   @method     This function logs a message before throwing it as an Exception.
         *
         *   @param      string    : The message too log and throw as an Exception.
-        *
-        *   @throws     Exception : Error connectiong to the mysql database; ($error)
-        *   @throws     Exception : Could not read mysqlSocket configuration file.
-        *   @throws     Exception : mysqlSocket configuration missing credential(s).
         * */
-        private function handleError ($msg) {
-            // Set the message as an Exception
-            $e = new Exception($msg);
+        private function logError ($no, $str) {
             //  Create the logger instance and set the name of the logfile.
             $logger = new logger('mysqlSocket_errorLog');
+            // Set the message as an Exception
+            try { throw new Exception($no." :\t".$str); }
+            catch (Exception $e)
             //  Log the error message.
-            $logger->log($e);
+            { $logger->log($e); }
         }
 
     }
