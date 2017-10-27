@@ -1,0 +1,151 @@
+/* CSS */
+.hidden { display: none; }
+
+.perspective-center {
+    position: absolute;
+    top: 40vh;
+    left: 50vw;
+}
+
+.absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.center {
+    position: relative;
+    top: 50%;
+    left: 50%;
+}
+
+.vertical-center {
+  position: relative;
+  top: 50%;
+}
+
+.horizontal-center {
+  position: relative;
+  left: 50%;
+}
+
+.counter-size { transform: translate(-50%,-50%); }
+
+.counter-height { transform: translate(-50%,-0%); }
+
+.counter-width { transform: translate(-0%,-50%); }
+
+.top-margin-xs { margin-top: 5px; }
+.left-margin-xs { margin-left: 5px; }
+.bottom-margin-xs { margin-bottom: 5px; }
+.right-margin-xs { margin-right: 5px; }
+
+.top-padding-xs { padding-top: 5px; }
+.left-padding-xs { padding-left: 5px; }
+.bottom-padding-xs { padding-bottom: 5px; }
+.right-padding-xs { padding-right: 5px; }
+
+.margin-xs { margin: 5px; }
+.padding-xs { padding: 5px; }
+
+.top-margin-sm { margin-top: 10px; }
+.left-margin-sm { margin-left: 10px; }
+.bottom-margin-sm { margin-bottom: 10px; }
+.right-margin-sm { margin-right: 10px; }
+
+.top-padding-sm { padding-top: 10px; }
+.left-padding-sm { padding-left: 10px; }
+.bottom-padding-sm { padding-bottom: 10px; }
+.right-padding-sm { padding-right: 10px; }
+
+.margin-sm { margin: 10px; }
+.padding-sm { padding: 10px; }
+
+.top-margin-md { margin-top: 15px; }
+.left-margin-md { margin-left: 15px; }
+.bottom-margin-md { margin-bottom: 15px; }
+.right-margin-md { margin-right: 15px; }
+
+.top-padding-md { padding-top: 15px; }
+.left-padding-md { padding-left: 15px; }
+.bottom-padding-md { padding-bottom: 15px; }
+.right-padding-md { padding-right: 15px; }
+
+.margin-md { margin: 15px; }
+.padding-md { padding: 15px; }
+
+.top-margin-lg { margin-top: 20px; }
+.left-margin-lg { margin-left: 20px; }
+.bottom-margin-lg { margin-bottom: 20px; }
+.right-margin-lg { margin-right: 20px; }
+
+.top-padding-lg { padding-top: 20px; }
+.left-padding-lg { padding-left: 20px; }
+.bottom-padding-lg { padding-bottom: 20px; }
+.right-padding-lg { padding-right: 20px; }
+
+.margin-lg { margin: 20px; }
+.padding-lg { padding: 20px; }
+
+.top-margin-xl { margin-top: 40px; }
+.left-margin-xl { margin-left: 40px; }
+.bottom-margin-xl { margin-bottom: 40px; }
+.right-margin-xl { margin-right: 40px; }
+
+.top-padding-xl { padding-top: 40px; }
+.left-padding-xl { padding-left: 40px; }
+.bottom-padding-xl { padding-bottom: 40px; }
+.right-padding-xl { padding-right: 40px; }
+
+.margin-xl { margin: 40px; }
+.padding-xl { padding: 40px; }
+
+.tabs-left {
+  border-bottom: none;
+  padding-top: 2px;
+  border-right: 1px solid #ddd;
+}
+
+.tabs-left > li {
+  float: none;
+  margin-bottom: 2px;
+  margin-right: -1px;
+}
+
+.tabs-left > li.active > a,
+.tabs-left > li.active > a:hover,
+.tabs-left > li.active > a:focus {
+  border-bottom-color: #ddd;
+  border-right-color: transparent;
+}
+
+.tabs-left > li > a {
+  border-radius: 4px 0 0 4px;
+  margin-right: 0;
+  display:block;
+}
+
+.tabs-right {
+  border-bottom: none;
+  padding-top: 2px;
+  border-left: 1px solid #ddd;
+}
+
+.tabs-right > li {
+  float: none;
+  margin-bottom: 2px;
+  margin-left: -1px;
+}
+
+.tabs-right > li.active > a,
+.tabs-right > li.active > a:hover,
+.tabs-right > li.active > a:focus {
+  border-bottom-color: #ddd;
+  border-left-color: transparent;
+}
+
+.tabs-right > li > a {
+  border-radius: 4px 0 0 4px;
+  margin-left: 0;
+  display:block;
+}
